@@ -29,13 +29,17 @@ module.exports = {
   }
 }
 
+let sourceCache = ''
+
 const importChunk = (node, context) => {
   const sourceCode = context.getSourceCode()
-  const sourceText = sourceCode.getText()
+  const importIdx = node.findLastIndex(item => item.type === 'ImportDeclaration')
+  const importList = node.slice(0, importIdx + 1)
+
   const start = 0
   const end = node.at(-1).end
 
-  const moduleMap = parseNodeModule(node, sourceCode)
+  const moduleMap = parseNodeModule(importList, sourceCode)
   const groupModuleMap = createGroup(moduleMap)
   const sortGroupModuleMap = groupSort(groupModuleMap)
   groupModuleSort(sortGroupModuleMap)
@@ -43,7 +47,8 @@ const importChunk = (node, context) => {
   const chunks = Object.values(sortGroupModuleMap).map(arr => arr.map(item => item.text).join('\n'))
   const text = chunks.join('\n\n')
 
-  if (sourceText === text) return
+  if (sourceCache === text) return
+  sourceCache = text
   context.report({
     loc: {
       start,
