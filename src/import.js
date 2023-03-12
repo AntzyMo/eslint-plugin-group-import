@@ -37,8 +37,10 @@ const importChunk = (node, context) => {
 
   const moduleMap = parseNodeModule(node, sourceCode)
   const groupModuleMap = createGroup(moduleMap)
-  const chunks = moduleSort(groupModuleMap)
-  console.log('chunks', chunks)
+  const sortGroupModuleMap = groupSort(groupModuleMap)
+  groupModuleSort(sortGroupModuleMap)
+
+  const chunks = Object.values(sortGroupModuleMap).map(arr => arr.map(item => item.text).join('\n'))
   const text = chunks.join('\n\n')
 
   if (sourceText === text) return
@@ -91,13 +93,38 @@ const createGroup = module => {
   }
 }
 
-// 排序
-const moduleSort = groupModuleMap => {
-  for (const [key, arr] of Object.entries(groupModuleMap)) {
+// 排序分组
+const groupSort = groupModuleMap => {
+  const group = ['npm']
+  const groupArr = []
+
+  // 1.筛选优先级
+  group.forEach(item => {
+    if (Object.prototype.hasOwnProperty.call(groupModuleMap, item)) {
+      groupArr.push([item, groupModuleMap[item]])
+    }
+  })
+  // 去除优先级的属性重组数组
+  const groupModuleArr = Object.entries(groupModuleMap).reduce((cur, next) => {
+    const [key] = next
+    if (group.includes(key)) return cur
+    return [...cur, next]
+  }, [])
+
+  // 2. 筛选出优先级后 看谁的分组数量多谁就放到最后面
+  groupModuleArr.sort(([, aArr], [, bArr]) => (aArr.length > bArr.length ? 1 : -1))
+  return Object.fromEntries([...groupArr, ...groupModuleArr])
+}
+
+/**
+ * 每个分组根据里面的长度去排序
+ * @param {*} groupModuleMap
+ *
+ * import { storeToRefs } from 'pinia'
+ * import { onMounted, ref } from 'vue'
+ */
+const groupModuleSort = groupModuleMap => {
+  for (const [, arr] of Object.entries(groupModuleMap)) {
     arr.sort((a, b) => (a.text.length > b.text.length ? 1 : -1))
   }
-
-  const textGroup = Object.values(groupModuleMap).map(arr => arr.map(item => item.text).join('\n'))
-
-  return textGroup
 }
