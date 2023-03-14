@@ -29,17 +29,15 @@ module.exports = {
   }
 }
 
-let sourceCache = ''
-
 const importChunk = (node, context) => {
   const sourceCode = context.getSourceCode()
-  const importIdx = node.findLastIndex(item => item.type === 'ImportDeclaration')
-  const importList = node.slice(0, importIdx + 1)
+  // 获取所有虚拟dom的import节点
+  const importNodeList = getImportNodesList(node)
 
-  const start = 0
-  const end = importList.at(-1).end
+  // 获取源代码中所有import的代码
+  const importSourceCode = getImportSource(node, sourceCode)
 
-  const moduleMap = parseNodeModule(importList, sourceCode)
+  const moduleMap = parseNodeModule(importNodeList, sourceCode)
   const groupModuleMap = createGroup(moduleMap)
   const sortGroupModuleMap = groupSort(groupModuleMap, context)
   groupModuleSort(sortGroupModuleMap)
@@ -47,18 +45,41 @@ const importChunk = (node, context) => {
   const chunks = Object.values(sortGroupModuleMap).map(arr => arr.map(item => item.text).join('\n'))
   const text = chunks.join('\n\n')
 
-  if (sourceCache === text) return
-  sourceCache = text
+  if (importSourceCode === text) return
+
   context.report({
     loc: {
-      start,
-      end
+      start: importNodeList[0].loc.start,
+      end: importNodeList.at(-1).loc.end
     },
     messageId: 'sort',
     fix: fixer => {
+      const start = importNodeList[0].start
+      const end = importNodeList.at(-1).end
       return fixer.replaceTextRange([start, end], text)
     }
   })
+}
+
+// 获取所有虚拟dom的import节点
+const getImportNodesList = node => {
+  const findLastimportIdx = node.findLastIndex(item => item.type === 'ImportDeclaration')
+  return node.slice(0, findLastimportIdx + 1)
+}
+
+// 获取源代码的import代码
+const getImportSource = (node, sourceCode) => {
+  // 获取源代码中最后一个import的行数
+  const findLastimport = node.findLast(item => item.type === 'ImportDeclaration')
+  const lastImportIdx = findLastimport.loc.end.line
+
+  return sourceCode.lines
+    .slice(0, lastImportIdx)
+    .reduce((cur, next) => {
+      const text = next.trim()
+      return [...cur, text]
+    }, [])
+    .join('\n')
 }
 
 // 解析模块重组结构
