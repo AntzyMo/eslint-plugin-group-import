@@ -2,13 +2,13 @@ const { extractChunkInfo } = require('./utils')
 
 module.exports = {
   meta: {
-    type: 'suggestion',
+    type: 'layout',
     docs: {
-      description: '识别到Ref函数,变量声明自动加上Ref后缀',
-      url: 'https://github.com/AntzyMo/eslint-config/tree/main/packages/eslint-plugin-antzy#readme'
+      description: '对import进行分组排序',
+      url: 'https://github.com/AntzyMo/eslint-plugin-import#readme'
     },
     fixable: 'code',
-    messages: { suffixRef: '建议加上Ref后缀' },
+    messages: { sort: 'Sort imports by group' },
     schema: []
   },
   create: context => {
@@ -41,7 +41,7 @@ const importChunk = (node, context) => {
 
   const moduleMap = parseNodeModule(importList, sourceCode)
   const groupModuleMap = createGroup(moduleMap)
-  const sortGroupModuleMap = groupSort(groupModuleMap)
+  const sortGroupModuleMap = groupSort(groupModuleMap, context)
   groupModuleSort(sortGroupModuleMap)
 
   const chunks = Object.values(sortGroupModuleMap).map(arr => arr.map(item => item.text).join('\n'))
@@ -54,7 +54,7 @@ const importChunk = (node, context) => {
       start,
       end
     },
-    message: 'test',
+    messageId: 'sort',
     fix: fixer => {
       return fixer.replaceTextRange([start, end], text)
     }
@@ -99,8 +99,9 @@ const createGroup = module => {
 }
 
 // 排序分组
-const groupSort = groupModuleMap => {
-  const group = ['npm']
+const groupSort = (groupModuleMap, context) => {
+  const { groups = [] } = context.options
+  const group = ['npm', ...groups]
   const groupArr = []
 
   // 1.筛选优先级
