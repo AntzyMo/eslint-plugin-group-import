@@ -1,15 +1,33 @@
 {
-  "name": "eslint-plugin-import",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "keywords": [],
-  "author": "",
+  "name": "eslint-plugin-group-import",
+  "version": "0.0.1",
+  "description": "eslint plugin for import group",
+  "main": "src/index.js",
+  "scripts": {
+    "release": "bumpp package.json  --commit --push --tag"
+  },
+  "files": [
+    "src"
+  ],
+  "keywords": [
+    "eslint",
+    "eslintplugin"
+  ],
+  "author": "AntzyMo <mozbano@163.com>",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AntzyMo/eslint-plugin-import.git"
+  },
+  "bugs": {
+    "url": "https://github.com/AntzyMo/eslint-config/issues"
+  },
+  "homepage": "https://github.com/AntzyMo/eslint-plugin-import",
   "dependencies": {
     "eslint": "^8.35.0"
   },
   "devDependencies": {
-    "@antzy/eslint-config": "^1.4.10"
+    "@antzy/eslint-config": "^1.4.10",
+    "bumpp": "^9.0.0"
   }
 }
