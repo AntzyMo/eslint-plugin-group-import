@@ -37,7 +37,7 @@ const importChunk = (node, context) => {
   const importList = node.slice(0, importIdx + 1)
 
   const start = 0
-  const end = node.at(-1).end
+  const end = importList.at(-1).end
 
   const moduleMap = parseNodeModule(importList, sourceCode)
   const groupModuleMap = createGroup(moduleMap)
@@ -117,8 +117,11 @@ const groupSort = groupModuleMap => {
   }, [])
 
   // 2. 筛选出优先级后 看谁的分组数量多谁就放到最后面
-  groupModuleArr.sort(([, aArr], [, bArr]) => (aArr.length > bArr.length ? 1 : -1))
-  return Object.fromEntries([...groupArr, ...groupModuleArr])
+  const other = groupModuleArr.at(-1)
+  const rest = groupModuleArr.slice(0, -1)
+  rest.sort(([, aArr], [, bArr]) => (aArr.length > bArr.length ? 1 : -1))
+
+  return Object.fromEntries([...groupArr, ...groupModuleArr, ...rest, other])
 }
 
 /**
