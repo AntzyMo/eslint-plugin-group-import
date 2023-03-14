@@ -1,5 +1,3 @@
-const arr = ['vue', 'pinia', './components/RightMemu/index.vue', '../../components/RightMemu/index.vue']
-
 // 提取模块路径信息
 const extractChunkInfo = chunk => {
   const splitChunk = chunk.split('/')
@@ -28,10 +26,6 @@ const extractChunkInfo = chunk => {
 const isNormalName = string => {
   return !/^([.]|[.]{2}|[@]){1}$/g.test(string)
 }
-
-arr.forEach(item => {
-  console.log(extractChunkInfo(item, 'arr'))
-})
 
 module.exports = {
   extractChunkInfo

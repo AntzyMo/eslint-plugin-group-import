@@ -1,4 +1,4 @@
-const importRule = require('./rules/import')
+const importRule = require('./import')
 
 module.exports = {
   rules: {
