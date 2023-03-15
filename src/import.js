@@ -1,4 +1,4 @@
-const { extractChunkInfo, getImportItems } = require('./parseNodeModule')
+const { extractChunkInfo, getImportItems, removeWithSamevariate } = require('./utils')
 
 module.exports = {
   meta: {
@@ -72,6 +72,8 @@ const parseNodeModule = (node, sourceCode) =>
   node.map(item => {
     const module = item.source.value
     const text = sourceCode.getText(item)
+    removeWithSamevariate(sourceCode, item, text)
+
     return {
       text,
       ...extractChunkInfo(module)

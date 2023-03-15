@@ -57,7 +57,26 @@ const isImport = type => {
   return type === 'ImportDeclaration'
 }
 
+// 去除重复的变量
+const removeWithSamevariate = (sourceCode, item, text) => {
+  const itemTokens = sourceCode.getFirstTokens(item)
+  const identifyMap = itemTokens.reduce((cur, next) => {
+    if (next.type === 'Identifier') {
+      if (!cur[next.value]) cur[next.value] = 0
+      cur[next.value]++
+    }
+    return cur
+  }, {})
+
+  for (const [key, value] of Object.entries(identifyMap)) {
+    if (value > 1) {
+      text = text.replace(`${key},`, '')
+    }
+  }
+}
+
 module.exports = {
   extractChunkInfo,
-  getImportItems
+  getImportItems,
+  removeWithSamevariate
 }
