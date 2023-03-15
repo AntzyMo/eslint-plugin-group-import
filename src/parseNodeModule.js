@@ -22,11 +22,42 @@ const extractChunkInfo = chunk => {
   }
 }
 
+/**
+ * 找到最后一个import，然后重组结构
+ * import 在最上面，其他都移到下面
+ * @param {*} node
+ * @returns
+ */
+const getImportItems = node => {
+  const lastImportIdx = node.findLastIndex(item => isImport(item.type))
+  const otherCode = []
+  const importItems = node.slice(0, lastImportIdx + 1).reduce((cur, next) => {
+    if (isImport(next.type)) {
+      return [...cur, next]
+    } else {
+      otherCode.push(next)
+      return cur
+    }
+  }, [])
+
+  return {
+    importItems,
+    otherCode,
+    soruceCodeStart: node[0].range[0],
+    soruceCodeEnd: importItems.at(-1).range[1]
+  }
+}
+
 // 判断是否是正常的模块名
 const isNormalName = string => {
   return !/^([.]|[.]{2}|[@]){1}$/g.test(string)
 }
 
+const isImport = type => {
+  return type === 'ImportDeclaration'
+}
+
 module.exports = {
-  extractChunkInfo
+  extractChunkInfo,
+  getImportItems
 }

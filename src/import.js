@@ -1,4 +1,4 @@
-const { extractChunkInfo } = require('./utils')
+const { extractChunkInfo, getImportItems } = require('./parseNodeModule')
 
 module.exports = {
   meta: {
@@ -31,13 +31,21 @@ module.exports = {
 
 const importChunk = (node, context) => {
   const sourceCode = context.getSourceCode()
-  // 获取所有虚拟dom的import节点
-  const importNodeList = getImportNodesList(node)
 
-  // 获取源代码中所有import的代码
-  const importSourceCode = getImportSource(node, sourceCode)
+  const { importItems, otherCode, soruceCodeStart, soruceCodeEnd } = getImportItems(node)
 
-  const moduleMap = parseNodeModule(importNodeList, sourceCode)
+  const otherCodeItems = otherCode.map(item => sourceCode.getText(item)).join('\n')
+
+  // 获取import源代码 之后跟text进行比较
+  const importSourceCode = sourceCode
+    .getText()
+    .slice(soruceCodeStart, soruceCodeEnd)
+    .split('\n')
+    .map(item => item.trim())
+    .join('\n')
+
+  const moduleMap = parseNodeModule(importItems, sourceCode)
+
   const groupModuleMap = createGroup(moduleMap)
   const sortGroupModuleMap = groupSort(groupModuleMap, context)
   groupModuleSort(sortGroupModuleMap)
@@ -49,37 +57,14 @@ const importChunk = (node, context) => {
 
   context.report({
     loc: {
-      start: importNodeList[0].loc.start,
-      end: importNodeList.at(-1).loc.end
+      start: importItems[0].loc.start,
+      end: importItems.at(-1).loc.end
     },
     messageId: 'sort',
     fix: fixer => {
-      const start = importNodeList[0].start
-      const end = importNodeList.at(-1).end
-      return fixer.replaceTextRange([start, end], text)
+      return fixer.replaceTextRange([soruceCodeStart, soruceCodeEnd], `${text}\n${otherCodeItems}`)
     }
   })
-}
-
-// 获取所有虚拟dom的import节点
-const getImportNodesList = node => {
-  const findLastimportIdx = node.findLastIndex(item => item.type === 'ImportDeclaration')
-  return node.slice(0, findLastimportIdx + 1)
-}
-
-// 获取源代码的import代码
-const getImportSource = (node, sourceCode) => {
-  // 获取源代码中最后一个import的行数
-  const findLastimport = node.findLast(item => item.type === 'ImportDeclaration')
-  const lastImportIdx = findLastimport.loc.end.line
-
-  return sourceCode.lines
-    .slice(0, lastImportIdx)
-    .reduce((cur, next) => {
-      const text = next.trim()
-      return [...cur, text]
-    }, [])
-    .join('\n')
 }
 
 // 解析模块重组结构
