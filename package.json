@@ -19,12 +19,12 @@
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AntzyMo/eslint-plugin-import.git"
+    "url": "git+https://github.com/AntzyMo/eslint-plugin-group-import.git"
   },
   "bugs": {
-    "url": "https://github.com/AntzyMo/eslint-config/issues"
+    "url": "https://github.com/AntzyMo/eslint-plugin-group-import/issues"
   },
-  "homepage": "https://github.com/AntzyMo/eslint-plugin-import",
+  "homepage": "https://github.com/AntzyMo/eslint-plugin-group-import",
   "dependencies": {
     "eslint": "^8.35.0"
   },
