@@ -1,14 +1,16 @@
 # eslint-plugin-group-import
 
 <p align="center">
-    <br> English | <a href="README-CN.md">中文</a>
+    <br> <a href="README.md">English</a> | 中文
 </p>
 
-Automatically sorts imports based on groups. By default, `npm` and `type` are at the top and `other` is at the bottom. The `other` group is formed because there are no repeated imported directories.
+自动根据分组对import进行排序，默认`npm`,`type`在最上面，`other`在最下面，`other`的形成发的键：没有重复导入的目录
 
-- ✅️ Import sorting
-- ✅️ TypeScript support
-- ❌ Export sorting (in progress...)
+- ✅️ import的导入排序
+- ✅️ 支持 TypeScript
+- ❌ export的导入排序（进行中...）
+
+
 
 ## Example
 ```js
@@ -68,7 +70,7 @@ pnpm add eslint-plugin-group-import -D
 
 ## Usage
 
-Add `group-import` to `plugins` in your `.eslintrc.cjs` file: 
+在你的`.eslintrc.cjs`中添加`group-import`到`plugins`: 
 
 ```js
 module.exports = {
@@ -76,7 +78,7 @@ module.exports = {
 }
 ```
 
-Then add `import` to `rules`:
+然后添加`import`导入到`rules`
 
 ```js
 module.exports = {
@@ -85,7 +87,7 @@ module.exports = {
   }
 }
 ```
-You can also use `sort-imports` to sort the variables that are declared:
+也可以搭配`sort-imports`对声明的变量进行排序
 ```js
 module.exports = {
   "rules":{
@@ -109,8 +111,7 @@ import { a, b } from './test'
 
 ## configuration
 
-Customize the sort order by configuring the groups. By default, `npm` and `type` are at the top, and `other` is at the bottom. You can modify the middle positions by changing the groups.
-
+自定义排序的优先级，默认`npm`,`type`在最上面，`other`在最下面，可以通过`groups`配置去改变中间位置
 ```js
 module.exports = {
   rules:{
@@ -143,8 +144,8 @@ module.exports = {
   console.log(3)
   console.log(4)
 ```
-## Finally
+## 最后
 
-If you have any questions, please feel free to open an `issue`.
+有什么问题欢迎来提`issues`
 
 

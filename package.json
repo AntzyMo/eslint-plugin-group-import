@@ -11,7 +11,9 @@
   ],
   "keywords": [
     "eslint",
-    "eslintplugin"
+    "eslintplugin",
+    "import",
+    "group-import"
   ],
   "author": "AntzyMo <mozbano@163.com>",
   "license": "ISC",

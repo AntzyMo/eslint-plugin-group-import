@@ -1,4 +1,6 @@
-const { extractChunkInfo, getImportItems, removeWithSamevariate } = require('./utils')
+const { extractChunkInfo, getImportItems, removeSemi, removeWithSameVariate } = require('./utils')
+
+const defaultgroups = ['npm', 'type']
 
 module.exports = {
   meta: {
@@ -9,7 +11,19 @@ module.exports = {
     },
     fixable: 'code',
     messages: { sort: 'Sort imports by group' },
-    schema: []
+    schema: [
+      {
+        type: 'object',
+        properties: {
+          groups: {
+            type: 'array',
+            items: {
+              type: 'string'
+            }
+          }
+        }
+      }
+    ]
   },
   create: context => {
     const nodeCache = new Set()
@@ -30,6 +44,9 @@ module.exports = {
 }
 
 const importChunk = (node, context) => {
+  const { groups = [] } = context.options[0] || {}
+  const group = [...defaultgroups, ...groups]
+
   const sourceCode = context.getSourceCode()
 
   const { importItems, otherCode, soruceCodeStart, soruceCodeEnd } = getImportItems(node)
@@ -41,19 +58,19 @@ const importChunk = (node, context) => {
     .getText()
     .slice(soruceCodeStart, soruceCodeEnd)
     .split('\n')
-    .map(item => item.trim())
+    .map(item => removeSemi(item))
     .join('\n')
 
   const moduleMap = parseNodeModule(importItems, sourceCode)
 
-  const groupModuleMap = createGroup(moduleMap)
-  const sortGroupModuleMap = groupSort(groupModuleMap, context)
+  const groupModuleMap = createGroup(moduleMap, group)
+  const sortGroupModuleMap = groupSort(groupModuleMap, group)
   groupModuleSort(sortGroupModuleMap)
 
   const chunks = Object.values(sortGroupModuleMap).map(arr => arr.map(item => item.text).join('\n'))
-  const text = chunks.join('\n\n')
+  const importText = chunks.join('\n\n')
 
-  if (importSourceCode === text) return
+  if (importSourceCode === importText) return
 
   context.report({
     loc: {
@@ -62,7 +79,7 @@ const importChunk = (node, context) => {
     },
     messageId: 'sort',
     fix: fixer => {
-      return fixer.replaceTextRange([soruceCodeStart, soruceCodeEnd], `${text}\n${otherCodeItems}`)
+      return fixer.replaceTextRange([soruceCodeStart, soruceCodeEnd], `${importText};${otherCodeItems}`)
     }
   })
 }
@@ -71,34 +88,38 @@ const importChunk = (node, context) => {
 const parseNodeModule = (node, sourceCode) =>
   node.map(item => {
     const module = item.source.value
-    const text = sourceCode.getText(item)
-    removeWithSamevariate(sourceCode, item, text)
+    const text = removeSemi(sourceCode.getText(item))
+    removeWithSameVariate(sourceCode, item, text)
 
     return {
       text,
+      importKind: item.importKind,
       ...extractChunkInfo(module)
     }
   })
 
 // 创建分组
-const createGroup = module => {
+const createGroup = (module, groups) => {
   const moduleMap = {}
-  const other = []
 
   module.forEach(item => {
-    const { root, group } = item
-    const key = group === 'npm' ? 'npm' : root
+    const { root, group, importKind } = item
+    let key = group === 'npm' ? 'npm' : root
+    if (importKind === 'type') key = 'type'
 
     if (!moduleMap[key]) moduleMap[key] = []
     moduleMap[key].push(item)
   })
 
-  for (const [key, arr] of Object.entries(moduleMap)) {
-    if (arr.length === 1) {
-      other.push(...arr)
+  // 找出other分组
+  const other = Object.entries(moduleMap).reduce((cur, next) => {
+    const [key, arr] = next
+    if (arr.length === 1 && !groups.includes(key)) {
       delete moduleMap[key]
+      return [...cur, ...arr]
     }
-  }
+    return cur
+  }, [])
 
   return {
     ...moduleMap,
@@ -107,9 +128,7 @@ const createGroup = module => {
 }
 
 // 排序分组
-const groupSort = (groupModuleMap, context) => {
-  const { groups = [] } = context.options
-  const group = ['npm', ...groups]
+const groupSort = (groupModuleMap, group) => {
   const groupArr = []
 
   // 1.筛选优先级

@@ -58,7 +58,7 @@ const isImport = type => {
 }
 
 // 去除重复的变量
-const removeWithSamevariate = (sourceCode, item, text) => {
+const removeWithSameVariate = (sourceCode, item, text) => {
   const itemTokens = sourceCode.getFirstTokens(item)
   const identifyMap = itemTokens.reduce((cur, next) => {
     if (next.type === 'Identifier') {
@@ -75,8 +75,16 @@ const removeWithSamevariate = (sourceCode, item, text) => {
   }
 }
 
+// 删除分号
+const removeSemi = item => {
+  const semiIdx = item.indexOf(';')
+  const text = item.trim()
+  return semiIdx !== -1 ? item.slice(0, semiIdx) : text
+}
+
 module.exports = {
   extractChunkInfo,
   getImportItems,
-  removeWithSamevariate
+  removeWithSameVariate,
+  removeSemi
 }
