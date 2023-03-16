@@ -1,6 +1,6 @@
 {
   "name": "eslint-plugin-group-import",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "eslint plugin for import group",
   "main": "src/index.js",
   "scripts": {
