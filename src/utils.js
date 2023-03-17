@@ -1,17 +1,25 @@
 // 提取模块路径信息
-const extractChunkInfo = chunk => {
+const extractChunkInfo = (chunk, groups) => {
   const splitChunk = chunk.split('/')
 
   for (const [idx, value] of Object.entries(splitChunk)) {
     if (isNormalName(value)) {
       // 获取模块名和后缀名
       const [name, ext] = splitChunk.at(-1).split('.')
+
       // 获取根路径
-      const root = splitChunk.slice(0, Number(idx) + 1).join('/')
+      const customGroupRoot = () => {
+        const root = splitChunk.slice(0, Number(idx) + 1).join('/')
+        if (!groups.length) return root
+        for (const groupUrl of groups) {
+          if (chunk.includes(groupUrl)) return groupUrl
+        }
+        return root
+      }
 
       return {
         firstRoot: splitChunk[0],
-        root,
+        root: customGroupRoot(),
         url: chunk,
         group: splitChunk.length === 1 ? 'npm' : splitChunk[idx],
         split: splitChunk,

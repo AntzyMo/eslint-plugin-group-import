@@ -108,13 +108,15 @@ import { a, b } from './test'
 
 
 ## configuration
-
+### sort
 Customize the sort order by configuring the groups. By default, `npm` and `type` are at the top, and `other` is at the bottom. You can modify the middle positions by changing the groups.
 
 ```js
 module.exports = {
   rules:{
-  'group-import/imports': [2,{groups:['./components']}]
+  'group-import/imports': [2,{
+    sort:['./components']
+  }]
   }
 }
 ```
@@ -143,6 +145,46 @@ module.exports = {
   console.log(3)
   console.log(4)
 ```
+
+### groups
+Custom grouping.
+
+```js
+module.exports = {
+  rules:{
+  'group-import/imports': [2,{
+    groups:['../stores/index']
+  }]
+  }
+}
+```
+⬇️
+
+```js
+  import { storeToRefs } from 'pinia'
+  import { onMounted, ref } from 'vue'
+
+  import type { iconDialogRefType, wallpaperDialogRefType } from './type'
+
+  import { useBgIamgeStore } from '../stores/index'
+
+  import Tab from './components/Tab/index.vue'
+  import RightMemu from './components/RightMemu/index.vue'
+  import IconDialog from './components/IconDialog/index.vue'
+  import SearchInput from './components/SearchInput/index.vue'
+  import WallpaperDialog from './components/wallpaperDialog/index.vue'
+
+  import useRightMemu from './hooks/useRightMemu'
+  import useRightMemu1 from './hooks/useRightMemu1'
+
+  import { pageVisibilitychange } from '../utils/index'
+  import { useRightMemuStore, useTabStore } from '@/stores'
+  console.log(1)
+  console.log(2)
+  console.log(3)
+  console.log(4)
+```
+
 ## Finally
 
 If you have any questions, please feel free to open an `issue`.

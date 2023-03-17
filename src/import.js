@@ -44,8 +44,9 @@ module.exports = {
 }
 
 const importChunk = (node, context) => {
-  const { groups = [] } = context.options[0] || {}
+  const { groups = [], sort = [] } = context.options[0] || {}
   const group = [...defaultgroups, ...groups]
+  const sortGroup = [...defaultgroups, ...sort]
 
   const sourceCode = context.getSourceCode()
 
@@ -61,10 +62,10 @@ const importChunk = (node, context) => {
     .map(item => removeSemi(item))
     .join('\n')
 
-  const moduleMap = parseNodeModule(importItems, sourceCode)
+  const moduleMap = parseNodeModule(importItems, sourceCode, groups)
 
   const groupModuleMap = createGroup(moduleMap, group)
-  const sortGroupModuleMap = groupSort(groupModuleMap, group)
+  const sortGroupModuleMap = groupSort(groupModuleMap, sortGroup)
   groupModuleSort(sortGroupModuleMap)
 
   const chunks = Object.values(sortGroupModuleMap).map(arr => arr.map(item => item.text).join('\n'))
@@ -85,7 +86,7 @@ const importChunk = (node, context) => {
 }
 
 // 解析模块重组结构
-const parseNodeModule = (node, sourceCode) =>
+const parseNodeModule = (node, sourceCode, groups) =>
   node.map(item => {
     const module = item.source.value
     const text = removeSemi(sourceCode.getText(item))
@@ -94,7 +95,7 @@ const parseNodeModule = (node, sourceCode) =>
     return {
       text,
       importKind: item.importKind,
-      ...extractChunkInfo(module)
+      ...extractChunkInfo(module, groups)
     }
   })
 
