@@ -1,4 +1,4 @@
-# eslint-plugin-group-import
+<div style="display:flex;justify-content: center;"><img src="./assets/logo.svg"/></div>
 
 <p align="center">
     <br> English | <a href="README-CN.md">中文</a>
