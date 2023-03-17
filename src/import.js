@@ -150,7 +150,7 @@ const groupSort = (groupModuleMap, group) => {
   const rest = groupModuleArr.slice(0, -1)
   rest.sort(([, aArr], [, bArr]) => (aArr.length > bArr.length ? 1 : -1))
 
-  return Object.fromEntries([...groupArr, ...groupModuleArr, ...rest, other])
+  return Object.fromEntries([...groupArr, ...rest, other])
 }
 
 /**
