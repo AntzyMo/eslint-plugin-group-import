@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-    <br> <a href="README.md">English</a> | 中文
+    <br> <a href="https://github.com/AntzyMo/eslint-plugin-group-import">English</a> | 中文
 </p>
 
 自动根据分组对 import 进行排序，默认`npm`,`type`在最上面，`other`在最下面，`other`的形成发的键：没有重复导入的目录
