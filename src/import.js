@@ -1,4 +1,4 @@
-const { extractChunkInfo, getImportItems, removeSemi, removeWithSameVariate } = require('./utils')
+const { extractChunkInfo, getImportItems, downSort, removeSemi, removeWithSameVariate } = require('./utils')
 
 const defaultgroups = ['npm', 'type']
 
@@ -45,7 +45,6 @@ module.exports = {
 
 const importChunk = (node, context) => {
   const { groups = [], sort = [] } = context.options[0] || {}
-  const group = [...defaultgroups, ...groups]
   const sortGroup = [...defaultgroups, ...sort]
 
   const sourceCode = context.getSourceCode()
@@ -64,14 +63,15 @@ const importChunk = (node, context) => {
 
   const moduleMap = parseNodeModule(importItems, sourceCode, groups)
 
-  const groupModuleMap = createGroup(moduleMap, group)
+  const groupModuleMap = createGroup(moduleMap)
   const sortGroupModuleMap = groupSort(groupModuleMap, sortGroup)
   groupModuleSort(sortGroupModuleMap)
 
   const chunks = Object.values(sortGroupModuleMap).map(arr => arr.map(item => item.text).join('\n'))
   const importText = chunks.join('\n\n')
 
-  if (importSourceCode === importText) return
+  if (importSourceCode === importText)
+    return
 
   context.report({
     loc: {
@@ -86,21 +86,20 @@ const importChunk = (node, context) => {
 }
 
 // 解析模块重组结构
-const parseNodeModule = (node, sourceCode, groups) =>
-  node.map(item => {
-    const module = item.source.value
-    const text = removeSemi(sourceCode.getText(item))
-    removeWithSameVariate(sourceCode, item, text)
+const parseNodeModule = (node, sourceCode, groups) => node.map(item => {
+  const module = item.source.value
+  const text = removeSemi(sourceCode.getText(item))
+  removeWithSameVariate(sourceCode, item, text)
 
-    return {
-      text,
-      importKind: item.importKind,
-      ...extractChunkInfo(module, groups)
-    }
-  })
+  return {
+    text,
+    importKind: item.importKind,
+    ...extractChunkInfo(module, groups)
+  }
+})
 
 // 创建分组
-const createGroup = (module, groups) => {
+const createGroup = module => {
   const moduleMap = {}
 
   module.forEach(item => {
@@ -112,13 +111,16 @@ const createGroup = (module, groups) => {
     moduleMap[key].push(item)
   })
 
-  // 找出other分组
+  // 创建 other 分组
   const other = Object.entries(moduleMap).reduce((cur, next) => {
     const [key, arr] = next
-    if (arr.length === 1 && !groups.includes(key)) {
+
+    if (key === 'npm') return cur
+    if (arr.length === 1) {
       delete moduleMap[key]
       return [...cur, ...arr]
     }
+
     return cur
   }, [])
 
@@ -141,14 +143,15 @@ const groupSort = (groupModuleMap, group) => {
   // 去除优先级的属性重组数组
   const groupModuleArr = Object.entries(groupModuleMap).reduce((cur, next) => {
     const [key] = next
-    if (group.includes(key)) return cur
+    if (group.includes(key))
+      return cur
     return [...cur, next]
   }, [])
 
   // 2. 筛选出优先级后 看谁的分组数量多谁就放到最后面
   const other = groupModuleArr.at(-1)
   const rest = groupModuleArr.slice(0, -1)
-  rest.sort(([, aArr], [, bArr]) => (aArr.length > bArr.length ? 1 : -1))
+  rest.sort(([, aArr], [, bArr]) => downSort(aArr.length, bArr.length))
 
   return Object.fromEntries([...groupArr, ...rest, other])
 }
@@ -162,6 +165,7 @@ const groupSort = (groupModuleMap, group) => {
  */
 const groupModuleSort = groupModuleMap => {
   for (const [, arr] of Object.entries(groupModuleMap)) {
-    arr.sort((a, b) => (a.text.length > b.text.length ? 1 : -1))
+    arr.sort((a, b) => downSort(a.text.length, b.text.length))
   }
 }
+

@@ -90,9 +90,16 @@ const removeSemi = item => {
   return semiIdx !== -1 ? item.slice(0, semiIdx) : text
 }
 
+// 处理降序逻辑
+const downSort = (a, b) => {
+  if (a === b) return 0
+  return a > b ? 1 : -1
+}
+
 module.exports = {
   extractChunkInfo,
   getImportItems,
   removeWithSameVariate,
-  removeSemi
+  removeSemi,
+  downSort
 }
