@@ -67,7 +67,7 @@ const importChunk = (node, context) => {
   const sortGroupModuleMap = groupSort(groupModuleMap, sortGroup)
   groupModuleSort(sortGroupModuleMap)
 
-  const chunks = Object.values(sortGroupModuleMap).map(arr => arr.map(item => item.text).join('\n'))
+  const chunks = Object.values(sortGroupModuleMap).filter(item => item.length).map(arr => arr.map(item => item.text).join('\n'))
   const importText = chunks.join('\n\n')
 
   if (importSourceCode === importText)
