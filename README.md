@@ -203,3 +203,5 @@ console.log(4)
 ## Finally
 
 If you have any questions, please feel free to open an `issue`.
+## License
+[GPL-3.0](./LICENSE) License &copy; 2023-PRESENT [AntzyMo](https://github.com/AntzyMo)
