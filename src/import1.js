@@ -105,9 +105,11 @@ const createGroup = module => {
   module.forEach(item => {
     const { root, group, importKind } = item
     let key = group === 'npm' ? 'npm' : root
-    if (importKind === 'type') key = 'type'
+    if (importKind === 'type')
+      key = 'type'
 
-    if (!moduleMap[key]) moduleMap[key] = []
+    if (!moduleMap[key])
+      moduleMap[key] = []
     moduleMap[key].push(item)
   })
 
@@ -115,7 +117,8 @@ const createGroup = module => {
   const other = Object.entries(moduleMap).reduce((cur, next) => {
     const [key, arr] = next
 
-    if (key === 'npm') return cur
+    if (key === 'npm')
+      return cur
     if (arr.length === 1) {
       delete moduleMap[key]
       return [...cur, ...arr]

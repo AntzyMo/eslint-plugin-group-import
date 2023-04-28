@@ -2,12 +2,15 @@
   "name": "eslint-plugin-group-import",
   "version": "0.0.13",
   "description": "eslint plugin for import group",
-  "main": "src/index.js",
+  "main": "config/index.js",
   "scripts": {
+    "dev": "npm run build -- --watch",
+    "build": "esbuild src/index.js --bundle  --platform=node --packages=external --outfile=dist/index.js",
     "release": "bumpp package.json  --commit --push --tag"
   },
   "files": [
-    "src"
+    "config",
+    "dist"
   ],
   "keywords": [
     "eslint",
@@ -26,10 +29,12 @@
   },
   "homepage": "https://github.com/AntzyMo/eslint-plugin-group-import",
   "dependencies": {
-    "eslint": "^8.35.0"
+    "eslint": "^8.35.0",
+    "local-pkg": "^0.4.3"
   },
   "devDependencies": {
     "@antzy/eslint-config": "^2.0.0",
-    "bumpp": "^9.0.0"
+    "bumpp": "^9.0.0",
+    "esbuild": "^0.17.18"
   }
 }
