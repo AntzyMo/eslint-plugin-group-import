@@ -5,6 +5,6 @@ module.exports = {
   rules: {
     'simple-import-sort/imports': 0,
     'simple-import-sort/exports': 0,
-    'group-import/imports': 2
+    'group-import/imports': [2, { sort: ['./coot'] }]
   }
 }

@@ -1,12 +1,25 @@
-
-import { parseNode } from './shared'
+import { createGroups, parseNode } from './shared'
 
 export function createImportGroup(node, context) {
-  console.log(123)
-  const { groups = [], sort = [] } = context.options[0] || {}
-  const defaultGroups = ['npm', 'type', ...sort]
-  const res = parseNode(node, context)
-  console.log('res', res)
+  const { sort = [] } = context.options[0] || {}
+  const sourceCode = context.getSourceCode()
+  const defaultGroupsSort = ['npm', 'type', ...sort]
 
-  // console.log(createGroups(parsedValidatedNode))
+  const { validatedNode, parsedValidatedNode, validatedSourceCode, otherNode, sourceNodeStart, sourceNodeEnd } =
+    parseNode(node, context)
+  const groupsText = createGroups(parsedValidatedNode, defaultGroupsSort)
+  const otherText = otherNode.map(item => sourceCode.getText(item)).join('\n')
+
+  if (validatedSourceCode === groupsText) return
+
+  context.report({
+    loc: {
+      start: validatedNode[0].loc.start,
+      end: validatedNode.at(-1).loc.end
+    },
+    messageId: 'sort',
+    fix: fixer => {
+      return fixer.replaceTextRange([sourceNodeStart, sourceNodeEnd], `${groupsText};${otherText}`)
+    }
+  })
 }

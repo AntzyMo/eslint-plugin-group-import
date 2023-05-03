@@ -156,50 +156,6 @@ console.log(3)
 console.log(4)
 ```
 
-### groups
-
-自定义分组
-
-```js
-module.exports = {
-  rules: {
-    'group-import/imports': [
-      2,
-      {
-        groups: ['../stores/index']
-      }
-    ]
-  }
-}
-```
-
-⬇️
-
-```js
-import { storeToRefs } from 'pinia'
-import { onMounted, ref } from 'vue'
-
-import type { iconDialogRefType, wallpaperDialogRefType } from './type'
-
-import { useBgIamgeStore } from '../stores/index'
-
-import Tab from './components/Tab/index.vue'
-import RightMemu from './components/RightMemu/index.vue'
-import IconDialog from './components/IconDialog/index.vue'
-import SearchInput from './components/SearchInput/index.vue'
-import WallpaperDialog from './components/wallpaperDialog/index.vue'
-
-import useRightMemu from './hooks/useRightMemu'
-import useRightMemu1 from './hooks/useRightMemu1'
-
-import { pageVisibilitychange } from '../utils/index'
-import { useRightMemuStore, useTabStore } from '@/stores'
-console.log(1)
-console.log(2)
-console.log(3)
-console.log(4)
-```
-
 ## 最后
 
 有什么问题欢迎来提`issues`

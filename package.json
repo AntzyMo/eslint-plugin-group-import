@@ -33,7 +33,7 @@
     "local-pkg": "^0.4.3"
   },
   "devDependencies": {
-    "@antzy/eslint-config": "^2.0.0",
+    "@antzy/eslint-config": "1.4.9",
     "bumpp": "^9.0.0",
     "esbuild": "^0.17.18"
   }
