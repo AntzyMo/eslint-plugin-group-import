@@ -133,7 +133,7 @@ const handleNewLine = resultGroups => {
   }
 
   // 如果typeGroup只有一个，那么就把它放到npmGroup里面
-  if (typeGroup.length === 1) {
+  if (typeGroup && typeGroup.length === 1) {
     npmGroup.push(typeGroup[0])
     firstGroups.splice(1, 1)
   }
@@ -142,7 +142,7 @@ const handleNewLine = resultGroups => {
   const middleText = middleGroups.map(arr => transformToText(arr)).join('\n\n')
   const otherText = transformToText(otherGroups)
 
-  return `${firstText ? `${firstText}\n\n` : ''}${middleText ? `${middleText}\n\n` : ''}${otherText}`
+  return [firstText, middleText, otherText].filter(item => item).join('\n\n')
 }
 
 function isImport(type) {
