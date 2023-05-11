@@ -142,7 +142,7 @@ const handleNewLine = resultGroups => {
   const middleText = middleGroups.map(arr => transformToText(arr)).join('\n\n')
   const otherText = transformToText(otherGroups)
 
-  return [firstText, middleText, otherText].filter(item => item).join('\n\n')
+  return [firstText, middleText, otherText].filter(Boolean).join('\n\n')
 }
 
 function isImport(type) {
