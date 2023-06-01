@@ -10,6 +10,9 @@ export function createImportGroup(node, context) {
   const groupsText = createGroups(parsedValidatedNode, defaultGroupsSort)
   const otherText = otherNode.map(item => sourceCode.getText(item)).join('\n')
 
+  console.log('groupsText', groupsText);
+  console.log('validatedSourceCode', validatedSourceCode);
+  console.log('validatedSourceCode === groupsText', validatedSourceCode === groupsText);
   if (validatedSourceCode === groupsText) return
 
   context.report({

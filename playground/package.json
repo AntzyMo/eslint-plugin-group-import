@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@antzy/eslint-config": "1.4.9",
+    "@antzy/eslint-config": "latest",
     "eslint": "^8.35.0",
     "eslint-plugin-group-import": "workspace:*"
   },

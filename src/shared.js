@@ -1,4 +1,7 @@
+import os from 'os'
 import { isPackageExists } from 'local-pkg'
+
+const newLine = os.platform().includes('win') ? '\r\n' : '\n'
 
 // 解析模块重组结构
 export function parseNode(node, context) {
@@ -17,9 +20,10 @@ export function parseNode(node, context) {
   const validatedSourceCode = sourceCode
     .getText()
     .slice(sourceNodeStart, sourceNodeEnd)
-    .split('\n')
+    .split(newLine)
     .map(item => removeSemi(item))
-    .join('\n')
+    .join(newLine)
+    
 
   return {
     parsedValidatedNode,
@@ -129,7 +133,7 @@ const handleNewLine = resultGroups => {
   const [npmGroup, typeGroup] = firstGroups
 
   const transformToText = arr => {
-    return arr.map(item => item.text).join('\n')
+    return arr.map(item => item.text).join(newLine)
   }
 
   // 如果typeGroup只有一个，那么就把它放到npmGroup里面
@@ -138,11 +142,10 @@ const handleNewLine = resultGroups => {
     firstGroups.splice(1, 1)
   }
 
-  const firstText = firstGroups.map(arr => transformToText(arr)).join('\n\n')
-  const middleText = middleGroups.map(arr => transformToText(arr)).join('\n\n')
+  const firstText = firstGroups.map(arr => transformToText(arr)).join(newLine)
+  const middleText = middleGroups.map(arr => transformToText(arr)).join(newLine)
   const otherText = transformToText(otherGroups)
-
-  return [firstText, middleText, otherText].filter(Boolean).join('\n\n')
+  return [firstText, middleText, otherText].filter(Boolean).join(newLine)
 }
 
 function isImport(type) {
@@ -152,7 +155,7 @@ function isImport(type) {
 // 删除分号
 function removeSemi(item) {
   const semiIdx = item.indexOf(';')
-  const text = item.trim()
+  const text = item.trimEnd()
   return semiIdx !== -1 ? item.slice(0, semiIdx) : text
 }
 
@@ -161,6 +164,8 @@ const downSort = (a, b) => {
   if (a === b) return 0
   return a > b ? 1 : -1
 }
+
+
 
 // 去除重复的变量
 const removeWithSameVariate = (sourceCode, item, text) => {

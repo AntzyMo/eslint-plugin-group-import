@@ -1,14 +1,13 @@
-import type { Ref } from 'vue'
-import { onMounted, ref } from 'vue'
-import type { iconDialogRefType, wallpaperDialogRefType } from './type'
+import {
+  fun,
+  fun1
+} from './test'
+import {
+  fun2,
+  fun3
+} from './test1'
 
-import { test, useMousePosition } from './hook/kuseMousePosition1'
-import { test, test, test1, useMousePosition } from './hook/kuseMousePosition3'
-
-import react from 'react'
-import { useMousePosition } from './useMousePosition'
-import { test, useMousePosition } from './useMousePosition1'
-
-console.log(5)
+console.log(fun, fun1)
+console.log(fun2, fun3)
 console.log(23)
 console.log(1)
