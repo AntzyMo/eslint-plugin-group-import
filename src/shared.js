@@ -1,7 +1,4 @@
-import os from 'os'
 import { isPackageExists } from 'local-pkg'
-
-const newLine = os.platform().includes('win') ? '\r\n' : '\n'
 
 // 解析模块重组结构
 export function parseNode(node, context) {
@@ -20,10 +17,9 @@ export function parseNode(node, context) {
   const validatedSourceCode = sourceCode
     .getText()
     .slice(sourceNodeStart, sourceNodeEnd)
-    .split(newLine)
+    .split()
     .map(item => removeSemi(item))
-    .join(newLine)
-    
+    .join('\n')
 
   return {
     parsedValidatedNode,
@@ -128,12 +124,12 @@ function handleGroupsSort(resultGroups) {
   ]
 }
 
-const handleNewLine = resultGroups => {
+function handleNewLine(resultGroups) {
   const [firstGroups, middleGroups, otherGroups] = resultGroups
   const [npmGroup, typeGroup] = firstGroups
 
   const transformToText = arr => {
-    return arr.map(item => item.text).join(newLine)
+    return arr.map(item => item.text).join('\n')
   }
 
   // 如果typeGroup只有一个，那么就把它放到npmGroup里面
@@ -142,10 +138,11 @@ const handleNewLine = resultGroups => {
     firstGroups.splice(1, 1)
   }
 
-  const firstText = firstGroups.map(arr => transformToText(arr)).join(newLine)
-  const middleText = middleGroups.map(arr => transformToText(arr)).join(newLine)
+  const firstText = firstGroups.map(arr => transformToText(arr)).join('\n\n')
+  const middleText = middleGroups.map(arr => transformToText(arr)).join('\n\n')
   const otherText = transformToText(otherGroups)
-  return [firstText, middleText, otherText].filter(Boolean).join(newLine)
+
+  return [firstText, middleText, otherText].filter(Boolean).join('\n\n')
 }
 
 function isImport(type) {
@@ -155,20 +152,18 @@ function isImport(type) {
 // 删除分号
 function removeSemi(item) {
   const semiIdx = item.indexOf(';')
-  const text = item.trimEnd()
+  const text = item.trim()
   return semiIdx !== -1 ? item.slice(0, semiIdx) : text
 }
 
 // 处理降序逻辑
-const downSort = (a, b) => {
+function downSort(a, b) {
   if (a === b) return 0
   return a > b ? 1 : -1
 }
 
-
-
 // 去除重复的变量
-const removeWithSameVariate = (sourceCode, item, text) => {
+function removeWithSameVariate(sourceCode, item, text) {
   const itemTokens = sourceCode.getFirstTokens(item)
   const identifyMap = itemTokens.reduce((cur, next) => {
     if (next.type === 'Identifier') {
