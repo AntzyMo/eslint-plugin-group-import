@@ -5,14 +5,15 @@ export function createImportGroup(node, context) {
   const sourceCode = context.getSourceCode()
   const defaultGroupsSort = ['npm', 'type', ...sort]
 
-  const { validatedNode, parsedValidatedNode, validatedSourceCode, otherNode, sourceNodeStart, sourceNodeEnd } =
-    parseNode(node, context)
+  const {
+    validatedNode, parsedValidatedNode,
+    validatedSourceCode, otherNode,
+    sourceNodeStart, sourceNodeEnd
+  } = parseNode(node, context)
+
   const groupsText = createGroups(parsedValidatedNode, defaultGroupsSort)
   const otherText = otherNode.map(item => sourceCode.getText(item)).join('\n')
 
-  console.log('groupsText', groupsText);
-  console.log('validatedSourceCode', validatedSourceCode);
-  console.log('validatedSourceCode === groupsText', validatedSourceCode === groupsText);
   if (validatedSourceCode === groupsText) return
 
   context.report({
