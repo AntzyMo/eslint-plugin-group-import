@@ -60,7 +60,7 @@ function parseModuleStr(moduleStr, importKind) {
       const [group] = moduleStr.match(/^(((\.\.?)|\W+)\/)+([@-\w]+){1}/g)
       return group
     }
-    return isPKG ? 'npm' : importKind === 'type' ? 'type' : getFirstNameUri(moduleStr)
+    return importKind === 'type' ? 'type' : isPKG ? 'npm' : getFirstNameUri(moduleStr)
   } catch {
     console.log(`没有找到 ${moduleStr} 模块, 请下载依赖`)
   }
