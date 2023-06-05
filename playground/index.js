@@ -5,7 +5,7 @@ import {
 import {
   fun2,
   fun3
-} from './test1'
+} from './test1';
 
 console.log(fun, fun1)
 console.log(fun2, fun3)
