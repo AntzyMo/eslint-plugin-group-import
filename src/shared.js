@@ -1,3 +1,4 @@
+import os from 'node:os'
 import { isPackageExists } from 'local-pkg'
 
 // 解析模块重组结构
@@ -6,7 +7,8 @@ export function parseNode(node, context) {
   const { validatedNode, sourceNodeStart, sourceNodeEnd, otherNode } = findAllValidatedNode(node, isImport)
   const parsedValidatedNode = validatedNode.map(item => {
     const moduleStr = item.source.value
-    const text = removeSemi(sourceCode.getText(item))
+    const text = sourceCode.getText(item).split(os.EOL).map(item => removeSemi(item))
+      .join(os.EOL)
 
     return {
       text,
@@ -17,9 +19,9 @@ export function parseNode(node, context) {
   const validatedSourceCode = sourceCode
     .getText()
     .slice(sourceNodeStart, sourceNodeEnd)
-    .split()
+    .split(os.EOL)
     .map(item => removeSemi(item))
-    .join('\n')
+    .join(os.EOL)
 
   return {
     parsedValidatedNode,
@@ -129,7 +131,7 @@ function handleNewLine(resultGroups) {
   const [npmGroup, typeGroup] = firstGroups
 
   const transformToText = arr => {
-    return arr.map(item => item.text).join('\n')
+    return arr.map(item => item.text).join(os.EOL)
   }
 
   // 如果typeGroup只有一个，那么就把它放到npmGroup里面
@@ -138,11 +140,11 @@ function handleNewLine(resultGroups) {
     firstGroups.splice(1, 1)
   }
 
-  const firstText = firstGroups.map(arr => transformToText(arr)).join('\n\n')
-  const middleText = middleGroups.map(arr => transformToText(arr)).join('\n\n')
+  const newTwoLine = `${os.EOL}${os.EOL}`
+  const firstText = firstGroups.map(arr => transformToText(arr)).join(newTwoLine)
+  const middleText = middleGroups.map(arr => transformToText(arr)).join(newTwoLine)
   const otherText = transformToText(otherGroups)
-
-  return [firstText, middleText, otherText].filter(Boolean).join('\n\n')
+  return [firstText, middleText, otherText].filter(Boolean).join(newTwoLine)
 }
 
 function isImport(type) {

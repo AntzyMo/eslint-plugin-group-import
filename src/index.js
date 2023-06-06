@@ -1,3 +1,5 @@
+import os from 'node:os'
+
 import { createGroups, parseNode } from './shared'
 
 export function createImportGroup(node, context) {
@@ -12,7 +14,7 @@ export function createImportGroup(node, context) {
   } = parseNode(node, context)
 
   const groupsText = createGroups(parsedValidatedNode, defaultGroupsSort)
-  const otherText = otherNode.map(item => sourceCode.getText(item)).join('\n')
+  const otherText = otherNode.map(item => sourceCode.getText(item)).join(os.EOL)
 
   if (validatedSourceCode === groupsText) return
 
