@@ -1,3 +1,5 @@
+
+'use strict'
 import { reactive, ref } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
 import type { Ref } from 'vue'

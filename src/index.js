@@ -9,15 +9,20 @@ export function createImportGroup(node, context) {
   const {
     validatedNode, parsedValidatedNode,
     validatedSourceCode, otherNode,
-    sourceNodeStart, sourceNodeEnd
+    sourceNodeStart, sourceNodeEnd,
+    useNode
 
   } = parseNode(node, context)
 
   const EOL = resolveEndOfLine(sourceCode.getText().slice(sourceNodeStart, sourceNodeEnd))
+
   const groupsText = createGroups(parsedValidatedNode, defaultGroupsSort)
   const otherText = otherNode.map(item => sourceCode.getText(item)).join(EOL)
+  const useText = useNode.map(item => sourceCode.getText(item)).join(EOL)
 
-  if (validatedSourceCode === groupsText) return
+  const changedText = useText ? `${useText}${EOL}${groupsText}` : groupsText
+
+  if (validatedSourceCode === changedText) return
 
   context.report({
     loc: {
@@ -26,7 +31,7 @@ export function createImportGroup(node, context) {
     },
     messageId: 'sort',
     fix: fixer => {
-      return fixer.replaceTextRange([sourceNodeStart, sourceNodeEnd], `${groupsText};${otherText}`)
+      return fixer.replaceTextRange([sourceNodeStart, sourceNodeEnd], `${changedText};${otherText}`)
     }
   })
 }

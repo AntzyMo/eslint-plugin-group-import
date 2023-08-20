@@ -7,7 +7,7 @@ let EOL = null
 // 解析模块重组结构
 export function parseNode(node, context) {
   const sourceCode = context.getSourceCode()
-  const { validatedNode, sourceNodeStart, sourceNodeEnd, otherNode } = findAllValidatedNode(node, isImport)
+  const { validatedNode, sourceNodeStart, sourceNodeEnd, useNode, otherNode } = findAllValidatedNode(node, isImport)
 
   // 行尾符
   EOL = resolveEndOfLine(sourceCode.getText().slice(sourceNodeStart, sourceNodeEnd))
@@ -37,18 +37,29 @@ export function parseNode(node, context) {
     validatedNode,
     sourceNodeStart,
     sourceNodeEnd,
-    EOL
+    EOL,
+    useNode
   }
 }
 
 function findAllValidatedNode(node, validateNodeTypeFn) {
+  // 找到最后一个 import 节点的索引
   const lastNodeIdx = node.findLastIndex(item => validateNodeTypeFn(item.type))
+
+  // import 节点
   const validatedNode = []
+
+  // 除了 import 之外的节点
   const otherNode = []
+
+  // 'use strict' 严格模式要在最顶
+  const useNode = []
 
   node.slice(0, lastNodeIdx + 1).forEach(item => {
     if (validateNodeTypeFn(item.type)) {
       validatedNode.push(item)
+    } else if (item.type === 'ExpressionStatement' && item.expression.raw.includes('\'use')) {
+      useNode.push(item)
     } else {
       otherNode.push(item)
     }
@@ -57,6 +68,7 @@ function findAllValidatedNode(node, validateNodeTypeFn) {
   return {
     validatedNode,
     otherNode,
+    useNode,
     sourceNodeStart: node[0].range[0],
     sourceNodeEnd: validatedNode.at(-1).range[1]
   }
