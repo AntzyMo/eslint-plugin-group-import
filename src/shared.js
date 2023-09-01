@@ -58,7 +58,7 @@ function findAllValidatedNode(node, validateNodeTypeFn) {
   node.slice(0, lastNodeIdx + 1).forEach(item => {
     if (validateNodeTypeFn(item.type)) {
       validatedNode.push(item)
-    } else if (item.type === 'ExpressionStatement' && item.expression.raw.includes('\'use')) {
+    } else if (item.type === 'ExpressionStatement' && item.expression?.raw?.includes('\'use')) {
       useNode.push(item)
     } else {
       otherNode.push(item)
