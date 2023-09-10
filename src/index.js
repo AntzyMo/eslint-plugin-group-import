@@ -15,10 +15,11 @@ export function createImportGroup(node, context) {
   } = parseNode(node, context)
 
   const EOL = resolveEndOfLine(sourceCode.getText().slice(sourceNodeStart, sourceNodeEnd))
+  const nodeToText= (node) => [...node].map(item => sourceCode.getText(item)).join(EOL)
 
   const groupsText = createGroups(parsedValidatedNode, defaultGroupsSort)
-  const otherText = otherNode.map(item => sourceCode.getText(item)).join(EOL)
-  const useText = useNode.map(item => sourceCode.getText(item)).join(EOL)
+  const otherText = nodeToText(otherNode)
+  const useText = nodeToText(useNode)
 
   const changedText = useText ? `${useText}${EOL}${groupsText}` : groupsText
 
