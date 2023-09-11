@@ -12,23 +12,19 @@ export function parseNode(node, context) {
   // 行尾符
   EOL = resolveEndOfLine(sourceCode.getText().slice(sourceNodeStart, sourceNodeEnd))
 
+  // 去除分号之类的
+  const pureText = text => text.split(EOL).map(item => removeSemi(item)).join(EOL)
+
+  const validatedSourceCode = pureText(sourceCode.getText().slice(sourceNodeStart, sourceNodeEnd))
+
   const parsedValidatedNode = validatedNode.map(item => {
     const moduleStr = item.source.value
-    const text = sourceCode.getText(item).split(EOL).map(item => removeSemi(item))
-      .join(EOL)
 
     return {
-      text,
+      text: pureText(sourceCode.getText(item)),
       group: parseModuleStr(moduleStr, item.importKind)
     }
   })
-
-  const validatedSourceCode = sourceCode
-    .getText()
-    .slice(sourceNodeStart, sourceNodeEnd)
-    .split(EOL)
-    .map(item => removeSemi(item))
-    .join(EOL)
 
   return {
     parsedValidatedNode,
@@ -90,6 +86,7 @@ function parseModuleStr(moduleStr, importKind) {
 
 export function createGroups(parsedValidatedNode, groupsSort) {
   const groupMap = {}
+  console.log('groupMap', groupMap)
 
   // 1. 先按照 group 分组
   parsedValidatedNode.forEach(item => {
@@ -121,6 +118,30 @@ export function createGroups(parsedValidatedNode, groupsSort) {
   return groupsText
 }
 
+function handleNewLine(resultGroups) {
+  const [firstGroups, middleGroups, otherGroups] = resultGroups
+  const [npmGroup, typeGroup] = firstGroups
+
+  const transformToText = arr => {
+    return arr.map(item => item.text).join(EOL)
+  }
+
+  // 如果typeGroup只有一个，那么就把它放到npmGroup里面
+  if (typeGroup && typeGroup.length === 1) {
+    npmGroup.push(typeGroup[0])
+    firstGroups.splice(1, 1)
+  }
+
+  const newTwoLine = `${EOL}${EOL}`
+  const groupArrToText = group => [...group].map(arr => transformToText(arr)).join(newTwoLine)
+
+  const firstText = groupArrToText(firstGroups)
+  const middleText = groupArrToText(middleGroups)
+  const otherText = transformToText(otherGroups)
+
+  return [firstText, middleText, otherText].filter(Boolean).join(newTwoLine)
+}
+
 function handleGroupsSort(resultGroups) {
   const [firstGroups, middleGroups, otherGroups] = resultGroups
 
@@ -144,27 +165,6 @@ function handleGroupsSort(resultGroups) {
     groupSort(Object.values(Object.fromEntries(middleGroups))),
     resultOtherGroups
   ]
-}
-
-function handleNewLine(resultGroups) {
-  const [firstGroups, middleGroups, otherGroups] = resultGroups
-  const [npmGroup, typeGroup] = firstGroups
-
-  const transformToText = arr => {
-    return arr.map(item => item.text).join(EOL)
-  }
-
-  // 如果typeGroup只有一个，那么就把它放到npmGroup里面
-  if (typeGroup && typeGroup.length === 1) {
-    npmGroup.push(typeGroup[0])
-    firstGroups.splice(1, 1)
-  }
-
-  const newTwoLine = `${EOL}${EOL}`
-  const firstText = firstGroups.map(arr => transformToText(arr)).join(newTwoLine)
-  const middleText = middleGroups.map(arr => transformToText(arr)).join(newTwoLine)
-  const otherText = transformToText(otherGroups)
-  return [firstText, middleText, otherText].filter(Boolean).join(newTwoLine)
 }
 
 function isImport(type) {

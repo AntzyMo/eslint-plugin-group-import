@@ -1,4 +1,3 @@
-import { resolveEndOfLine } from './helper'
 import { createGroups, parseNode } from './shared'
 
 export function createImportGroup(node, context) {
@@ -10,12 +9,10 @@ export function createImportGroup(node, context) {
     validatedNode, parsedValidatedNode,
     validatedSourceCode, otherNode,
     sourceNodeStart, sourceNodeEnd,
-    useNode
-
+    useNode, EOL
   } = parseNode(node, context)
 
-  const EOL = resolveEndOfLine(sourceCode.getText().slice(sourceNodeStart, sourceNodeEnd))
-  const nodeToText= (node) => [...node].map(item => sourceCode.getText(item)).join(EOL)
+  const nodeToText = node => [...node].map(item => sourceCode.getText(item)).join(EOL)
 
   const groupsText = createGroups(parsedValidatedNode, defaultGroupsSort)
   const otherText = nodeToText(otherNode)
