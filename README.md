@@ -10,7 +10,6 @@ Automatically sorts imports based on groups. By default, `npm` and `type` are at
 
 - ✅️ Import sorting
 - ✅️ TypeScript support
-- ❌ Export sorting (in progress...)
 
 ## Example
 
@@ -160,4 +159,4 @@ console.log(4)
 
 If you have any questions, please feel free to open an `issue`.
 ## License
-[GPL-3.0](./LICENSE) License &copy; 2023-PRESENT [AntzyMo](https://github.com/AntzyMo)
+[MIT](./LICENSE) License &copy; 2023-PRESENT [AntzyMo](https://github.com/AntzyMo)

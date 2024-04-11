@@ -10,7 +10,6 @@
 
 - ✅️ import 的导入排序
 - ✅️ 支持 TypeScript
-- ❌ export 的导入排序（进行中...）
 
 ## Example
 
@@ -161,4 +160,4 @@ console.log(4)
 有什么问题欢迎来提`issues`
 
 ## License
-[GPL-3.0](./LICENSE) License &copy; 2023-PRESENT [AntzyMo](https://github.com/AntzyMo)
+[MIT](./LICENSE) License &copy; 2023-PRESENT [AntzyMo](https://github.com/AntzyMo)
