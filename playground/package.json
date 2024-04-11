@@ -11,12 +11,12 @@
   "license": "ISC",
   "devDependencies": {
     "@antzy/eslint-config": "latest",
-    "eslint": "^8.35.0",
+    "eslint": "^9.0.0",
     "eslint-plugin-group-import": "workspace:*"
   },
   "dependencies": {
-    "@vueuse/core": "^10.1.2",
-    "pinia": "^2.0.35",
-    "vue": "^3.2.47"
+    "@vueuse/core": "^10.9.0",
+    "pinia": "^2.1.7",
+    "vue": "^3.4.21"
   }
 }

@@ -19,7 +19,7 @@
     "group-import"
   ],
   "author": "AntzyMo <mozbano@163.com>",
-  "license": "ISC",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/AntzyMo/eslint-plugin-group-import.git"
@@ -28,13 +28,16 @@
     "url": "https://github.com/AntzyMo/eslint-plugin-group-import/issues"
   },
   "homepage": "https://github.com/AntzyMo/eslint-plugin-group-import",
+  "engines": {
+    "node": "^18.18.0 || >=20.0.0"
+  },
   "dependencies": {
-    "eslint": "^8.35.0",
-    "local-pkg": "^0.4.3"
+    "eslint": "^9.0.0",
+    "local-pkg": "^0.5.0"
   },
   "devDependencies": {
     "@antzy/eslint-config": "latest",
-    "bumpp": "^9.0.0",
-    "esbuild": "^0.17.18"
+    "bumpp": "^9.4.0",
+    "esbuild": "^0.20.2"
   }
 }
