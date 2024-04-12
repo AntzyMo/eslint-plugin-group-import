@@ -86,7 +86,6 @@ function parseModuleStr(moduleStr, importKind) {
 
 export function createGroups(parsedValidatedNode, groupsSort) {
   const groupMap = {}
-  console.log('groupMap', groupMap)
 
   // 1. 先按照 group 分组
   parsedValidatedNode.forEach(item => {
