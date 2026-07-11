@@ -6,7 +6,7 @@ let EOL = null
 
 // 解析模块重组结构
 export function parseNode(node, context) {
-  const sourceCode = context.getSourceCode()
+  const { sourceCode } = context
   const { validatedNode, sourceNodeStart, sourceNodeEnd, useNode, otherNode } = findAllValidatedNode(node, isImport)
 
   // 行尾符
